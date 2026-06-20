@@ -1,0 +1,13 @@
+# Examples directory
+# 
+# Place your project-specific update configurations here:
+# 
+# examples/
+#   ├── my-desktop-app/
+#   │   ├── PLAN.md                 (Your planning document)
+#   │   ├── update-client.ts        (Update logic)
+#   │   └── manifest.json           (Update manifest)
+#   │
+#   └── my-mobile-app/
+#       ├── PLAN.md
+#       └── update-config.json

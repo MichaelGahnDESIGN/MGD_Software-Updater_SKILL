@@ -1,0 +1,72 @@
+{
+  "latestVersion": "1.5.0",
+  "currentVersion": "1.4.2",
+  "updateAvailable": true,
+  "releases": [
+    {
+      "version": "1.5.0",
+      "releaseDate": "2024-06-20T10:00:00Z",
+      "channel": "stable",
+      "platforms": {
+        "macos": {
+          "url": "https://cdn.example.com/releases/app-1.5.0.dmg",
+          "fileSize": 152857600,
+          "checksumSHA256": "abc123def456789...",
+          "signingCertificate": "Developer ID Application: Your Name",
+          "signingFingerprint": "ABCD1234..."
+        },
+        "windows": {
+          "url": "https://cdn.example.com/releases/app-1.5.0.exe",
+          "fileSize": 180224000,
+          "checksumSHA256": "xyz789uvw...",
+          "signingCertificate": "Authenticode Certificate",
+          "signingFingerprint": "ABCD1234..."
+        },
+        "linux": {
+          "url": "https://cdn.example.com/releases/app-1.5.0.AppImage",
+          "fileSize": 175128576,
+          "checksumSHA256": "pqr123stu...",
+          "gpgSignature": "https://cdn.example.com/releases/app-1.5.0.AppImage.asc"
+        }
+      },
+      "minOSVersions": {
+        "macos": "10.14",
+        "windows": "10",
+        "linux": "Ubuntu 18.04"
+      },
+      "changelog": "## Version 1.5.0\n\n### Features\n- New Dark Mode\n- Improved Performance\n\n### Bugfixes\n- Fixed critical security issue\n- Fixed crash on startup\n\n### Security\n- Updated dependencies",
+      "mandatory": false,
+      "notes": "This is a stable release. Recommended for all users."
+    },
+    {
+      "version": "1.4.2",
+      "releaseDate": "2024-06-10T10:00:00Z",
+      "channel": "stable",
+      "platforms": {
+        "macos": {
+          "url": "https://cdn.example.com/releases/app-1.4.2.dmg",
+          "fileSize": 151000000,
+          "checksumSHA256": "old123def456789..."
+        },
+        "windows": {
+          "url": "https://cdn.example.com/releases/app-1.4.2.exe",
+          "fileSize": 179000000,
+          "checksumSHA256": "oldxyz789uvw..."
+        },
+        "linux": {
+          "url": "https://cdn.example.com/releases/app-1.4.2.AppImage",
+          "fileSize": 174000000,
+          "checksumSHA256": "oldpqr123stu..."
+        }
+      },
+      "minOSVersions": {
+        "macos": "10.13",
+        "windows": "7",
+        "linux": "Ubuntu 16.04"
+      },
+      "changelog": "## Version 1.4.2\n\n### Bugfixes\n- Fixed memory leak\n- Fixed file dialog issue",
+      "mandatory": false,
+      "notes": "Previous stable release. Still supported."
+    }
+  ]
+}

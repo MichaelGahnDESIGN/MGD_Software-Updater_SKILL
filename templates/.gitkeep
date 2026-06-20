@@ -1,0 +1,10 @@
+# Templates Directory
+#
+# Code templates & examples for different platforms:
+#
+# - update-manifest.json      (JSON schema for update info)
+# - update-client.ts          (TypeScript update client)
+# - update-client.js          (JavaScript update client)
+# - update-server.js          (Node.js update server)
+# - github-actions.yml        (CI/CD automation)
+# - And more...
