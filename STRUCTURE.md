@@ -209,4 +209,4 @@ To add your own update template:
 **Last Updated:** 2024-06-20  
 **License:** MIT  
 
-For questions: `Anfrage@Michael-Gahn.de`
+For questions: See [michael-gahn.de](https://michael-gahn.de)

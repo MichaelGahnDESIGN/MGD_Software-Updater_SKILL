@@ -1000,7 +1000,7 @@ Agent muss am Ende dokumentieren:
 
 ## Support & Issues
 
-Fragen? Öffne ein Issue auf GitHub oder kontaktiere mich unter `Anfrage@Michael-Gahn.de`.
+Fragen? Öffne ein Issue auf GitHub oder besuche [michael-gahn.de](https://michael-gahn.de).
 
 ---
 

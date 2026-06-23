@@ -228,4 +228,4 @@ Angaben gemäß § 5 DDG — Siehe [`IMPRESSUM.md`](IMPRESSUM.md).
 
 ---
 
-**Fragen?** Öffne ein Issue auf GitHub oder kontaktiere mich unter `Anfrage@Michael-Gahn.de`.
+**Fragen?** Öffne ein Issue auf GitHub oder kontaktiere mich über meine Website [michael-gahn.de](https://michael-gahn.de).

@@ -1,9 +1,30 @@
 /**
  * MGD Software Updater Client
- * 
+ *
  * TypeScript/JavaScript implementation for auto-update checking
  * Works with Electron, Tauri, Flutter, Web SPA, etc.
  */
+
+/**
+ * Simple logger interface for update events
+ */
+interface Logger {
+  log(message: string): void;
+  error(message: string, error?: Error): void;
+}
+
+/**
+ * Default console logger implementation
+ */
+class ConsoleLogger implements Logger {
+  log(message: string): void {
+    console.log(`[SoftwareUpdater] ${message}`);
+  }
+
+  error(message: string, error?: Error): void {
+    console.error(`[SoftwareUpdater] ERROR: ${message}`, error || '');
+  }
+}
 
 interface UpdateInfo {
   latestVersion: string;
@@ -37,6 +58,8 @@ interface UpdateCheckOptions {
   platform: string;
   channel?: 'stable' | 'beta' | 'dev';
   timeoutMs?: number;
+  maxRetries?: number;
+  retryDelayMs?: number;
 }
 
 interface UpdateDownloadOptions {
@@ -54,19 +77,30 @@ interface ProgressEvent {
 
 /**
  * Software Update Client
- * 
- * Usage:
+ *
+ * Manages application update checking, downloading, and verification.
+ * Implements security best practices including HTTPS validation,
+ * checksum verification, and exponential backoff retry logic.
+ *
+ * @example
+ * ```typescript
  * const updater = new SoftwareUpdater({
  *   manifestUrl: 'https://cdn.example.com/manifest.json',
  *   currentVersion: '1.4.0',
  *   platform: 'macos'
  * });
- * 
+ *
  * const updateInfo = await updater.checkForUpdates();
  * if (updateInfo.updateAvailable) {
- *   await updater.downloadUpdate(updateInfo.releases[0]);
- *   updater.showUpdateDialog(updateInfo);
+ *   await updater.downloadUpdate(updateInfo.releases[0], {
+ *     onProgress: (progress) => {
+ *       console.log(`${progress.percent.toFixed(2)}% complete`);
+ *     }
+ *   });
  * }
+ * ```
+ *
+ * @class SoftwareUpdater
  */
 export class SoftwareUpdater {
   private manifestUrl: string;
@@ -74,20 +108,60 @@ export class SoftwareUpdater {
   private platform: string;
   private channel: 'stable' | 'beta' | 'dev';
   private timeoutMs: number;
+  private maxRetries: number;
+  private retryDelayMs: number;
+  private logger: Logger;
 
-  constructor(options: UpdateCheckOptions) {
+  constructor(options: UpdateCheckOptions, logger?: Logger) {
     this.manifestUrl = options.manifestUrl;
     this.currentVersion = options.currentVersion;
     this.platform = options.platform;
     this.channel = options.channel || 'stable';
     this.timeoutMs = options.timeoutMs || 10000;
+    this.maxRetries = options.maxRetries || 3;
+    this.retryDelayMs = options.retryDelayMs || 1000;
+    this.logger = logger || new ConsoleLogger();
+  }
+
+  /**
+   * Validate manifest URL uses HTTPS protocol
+   *
+   * Security requirement: All manifest and download URLs must use HTTPS
+   * to prevent man-in-the-middle attacks.
+   *
+   * @param {string} url - The URL to validate
+   * @throws {Error} If URL is invalid or does not use HTTPS protocol
+   * @private
+   */
+  private validateManifestUrl(url: string): void {
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol !== 'https:') {
+        throw new Error('Manifest URL must use HTTPS protocol');
+      }
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('HTTPS')) {
+        throw error;
+      }
+      throw new Error(`Invalid manifest URL: ${url}`);
+    }
   }
 
   /**
    * Check for updates by fetching the manifest
+   *
+   * Fetches the update manifest from the configured URL and checks
+   * if a newer version is available for the current platform.
+   *
+   * @returns {Promise<UpdateInfo>} Update information including version, changelog, and download URLs
+   * @throws Will return a fallback response with no updates available on error
+   * @async
    */
   async checkForUpdates(): Promise<UpdateInfo> {
     try {
+      // Validate HTTPS before making request
+      this.validateManifestUrl(this.manifestUrl);
+
       const response = await fetch(this.manifestUrl, {
         method: 'GET',
         headers: {
@@ -115,7 +189,7 @@ export class SoftwareUpdater {
           this.isVersionNewer(platformRelease.version, this.currentVersion)
       };
     } catch (error) {
-      console.error('Error checking for updates:', error);
+      this.logger.error('Error checking for updates', error instanceof Error ? error : new Error(String(error)));
       return {
         latestVersion: this.currentVersion,
         currentVersion: this.currentVersion,
@@ -127,6 +201,15 @@ export class SoftwareUpdater {
 
   /**
    * Download update to destination path
+   *
+   * Initiates download of the specified release for the current platform.
+   * Validates checksums and enforces HTTPS protocol.
+   *
+   * @param {Release} release - The release to download
+   * @param {Partial<UpdateDownloadOptions>} options - Download options (destination path, progress callback)
+   * @returns {Promise<string>} Path where the update was saved
+   * @throws {Error} If platform not available in release or download fails after retries
+   * @async
    */
   async downloadUpdate(
     release: Release,
@@ -149,67 +232,108 @@ export class SoftwareUpdater {
   }
 
   /**
-   * Download file with checksum verification
+   * Download file with checksum verification and retry logic
    */
   private async downloadFile(options: UpdateDownloadOptions): Promise<string> {
     const { url, destinationPath, checksumSHA256, onProgress } = options;
+    let lastError: Error | null = null;
 
-    try {
-      console.log(`Downloading from: ${url}`);
-      
-      const response = await fetch(url, {
-        method: 'GET',
-        signal: AbortSignal.timeout(60000) // 60s timeout for download
-      });
+    for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
+      try {
+        // Validate HTTPS protocol for download URL
+        this.validateManifestUrl(url);
 
-      if (!response.ok) {
-        throw new Error(`Download failed: ${response.statusText}`);
-      }
+        this.logger.log(`Downloading from: ${url} (attempt ${attempt + 1}/${this.maxRetries + 1})`);
 
-      // Read response body with progress tracking
-      const contentLength = parseInt(response.headers.get('content-length') || '0', 10);
-      let loaded = 0;
+        const response = await fetch(url, {
+          method: 'GET',
+          signal: AbortSignal.timeout(60000) // 60s timeout for download
+        });
 
-      const reader = response.body?.getReader();
-      if (!reader) {
-        throw new Error('Response body is not readable');
-      }
+        if (!response.ok) {
+          throw new Error(`Download failed: ${response.statusText}`);
+        }
 
-      const chunks: Uint8Array[] = [];
+        // Read response body with progress tracking
+        const contentLength = parseInt(response.headers.get('content-length') || '0', 10);
+        let loaded = 0;
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
+        const reader = response.body?.getReader();
+        if (!reader) {
+          throw new Error('Response body is not readable');
+        }
 
-        chunks.push(value);
-        loaded += value.length;
+        const chunks: Uint8Array[] = [];
 
-        if (onProgress && contentLength > 0) {
-          onProgress({
-            loaded,
-            total: contentLength,
-            percent: (loaded / contentLength) * 100
-          });
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          chunks.push(value);
+          loaded += value.length;
+
+          if (onProgress && contentLength > 0) {
+            onProgress({
+              loaded,
+              total: contentLength,
+              percent: (loaded / contentLength) * 100
+            });
+          }
+        }
+
+        // Combine chunks and verify checksum
+        const fileBuffer = this.concatenateChunks(chunks);
+        await this.verifyChecksum(fileBuffer, checksumSHA256);
+
+        // Save to destination
+        await this.saveFile(destinationPath, fileBuffer);
+
+        this.logger.log(`Download complete: ${destinationPath}`);
+        return destinationPath;
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        this.logger.error(`Download attempt ${attempt + 1} failed: ${lastError.message}`);
+
+        if (attempt < this.maxRetries) {
+          // Exponential backoff: wait before retrying
+          const delayMs = this.retryDelayMs * Math.pow(2, attempt);
+          this.logger.log(`Retrying in ${delayMs}ms...`);
+          await this.delay(delayMs);
         }
       }
-
-      // Combine chunks and verify checksum
-      const fileBuffer = this.concatenateChunks(chunks);
-      await this.verifyChecksum(fileBuffer, checksumSHA256);
-
-      // Save to destination
-      await this.saveFile(destinationPath, fileBuffer);
-
-      console.log(`Download complete: ${destinationPath}`);
-      return destinationPath;
-    } catch (error) {
-      console.error('Download error:', error);
-      throw error;
     }
+
+    // All retries failed - cleanup and throw error
+    this.logger.error('Download failed after all retry attempts');
+    throw lastError || new Error('Download failed: unknown error');
+  }
+
+  /**
+   * Helper: delay for exponential backoff
+   *
+   * Implements a delay using setTimeout wrapped in a Promise.
+   * Used between retry attempts with exponential backoff.
+   *
+   * @param {number} ms - Milliseconds to delay
+   * @returns {Promise<void>} Resolves after the specified delay
+   * @private
+   * @async
+   */
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   /**
    * Verify SHA256 checksum
+   *
+   * Verifies that the downloaded file matches the expected SHA256 hash.
+   * This ensures file integrity and prevents tampering.
+   *
+   * @param {Uint8Array} buffer - The file content to verify
+   * @param {string} expectedHash - The expected SHA256 hash (hex-encoded)
+   * @throws {Error} If checksum does not match expected value
+   * @private
+   * @async
    */
   private async verifyChecksum(buffer: Uint8Array, expectedHash: string): Promise<void> {
     // Using Web Crypto API (available in modern browsers and Node.js)
@@ -223,11 +347,19 @@ export class SoftwareUpdater {
       );
     }
 
-    console.log('Checksum verified successfully');
+    this.logger.log('Checksum verified successfully');
   }
 
   /**
    * Compare versions (SemVer)
+   *
+   * Compares two semantic versions and determines if the new version is newer.
+   * Handles MAJOR.MINOR.PATCH format.
+   *
+   * @param {string} newVersion - The new version string (e.g., "1.5.0")
+   * @param {string} currentVersion - The current version string (e.g., "1.4.2")
+   * @returns {boolean} True if newVersion > currentVersion
+   * @private
    */
   private isVersionNewer(newVersion: string, currentVersion: string): boolean {
     const parseVersion = (v: string) => {
@@ -247,6 +379,13 @@ export class SoftwareUpdater {
 
   /**
    * Find latest release for platform
+   *
+   * Searches through releases to find the latest available for the
+   * current platform and configured update channel.
+   *
+   * @param {UpdateInfo} updateInfo - The update manifest
+   * @returns {Release | null} The latest release for the platform or null if not found
+   * @private
    */
   private findLatestForPlatform(updateInfo: UpdateInfo): Release | null {
     for (const release of updateInfo.releases) {
@@ -260,6 +399,12 @@ export class SoftwareUpdater {
 
   /**
    * Validate manifest structure
+   *
+   * Verifies that the manifest JSON contains required fields.
+   *
+   * @param {UpdateInfo} manifest - The manifest to validate
+   * @throws {Error} If manifest is missing required fields
+   * @private
    */
   private validateManifest(manifest: UpdateInfo): void {
     if (!manifest.releases || !Array.isArray(manifest.releases)) {
