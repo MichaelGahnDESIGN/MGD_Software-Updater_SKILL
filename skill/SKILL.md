@@ -1,6 +1,6 @@
 # MGD Software Updater Skill Assistent
 
-**Version 1.0** | [github.com/MichaelGahnDESIGN/MGD-Software-Updater-Skill-Assistent](https://github.com/MichaelGahnDESIGN/MGD-Software-Updater-Skill-Assistent)
+**Version 1.0** | [github.com/MichaelGahnDESIGN/MGD_Software-Updater_SKILL](https://github.com/MichaelGahnDESIGN/MGD_Software-Updater_SKILL)
 
 ---
 

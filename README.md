@@ -111,7 +111,7 @@ Jeder Technologie-Stack hat Template-Code in `examples/` und ein Implementierung
 
 ### 1. Dieses Repo klonen
 ```bash
-git clone https://github.com/MichaelGahnDESIGN/MGD-Software-Updater-Skill-Assistent.git
+git clone https://github.com/MichaelGahnDESIGN/MGD_Software-Updater_SKILL.git
 cd MGD-Software-Updater-Skill-Assistent
 ```
 
