@@ -100,4 +100,4 @@ Falls nach Release ein Sicherheitsproblem gefunden wird:
 
 ---
 
-**Kontakt für Sicherheitsfragen:** security@example.com
+**Kontakt für Sicherheitsfragen:** michaelgahndesign@gmail.com

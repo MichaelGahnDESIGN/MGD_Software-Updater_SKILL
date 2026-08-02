@@ -109,9 +109,10 @@ Wähle dein Level:
 
 ## Nächste Schritte
 
-- **[02 — Update-Typen](02-Update-Typen.md)** — Desktop vs. Mobile vs. Web
-- **[03 — Sicherheit](03-Sicherheit.md)** — Code-Signing, Checksums, TLS
-- **[04 — Datenschutz & DSGVO](04-Datenschutz-DSGVO.md)** — Privacy Rules
+- **[02 — Reifegrade](02-Maturity-Levels.md)** — welche Ausbaustufe dein Projekt braucht
+- **[03 — Desktop-Updates](03-Desktop-Updates.md)** · **[04 — Mobile](04-Mobile-Updates.md)** · **[05 — Web](05-Web-Updates.md)** · **[06 — Backend](06-Backend-Updates.md)** — der passende Update-Typ
+- **[07 — Sicherheit](07-Sicherheit.md)** — Code-Signing, Checksums, TLS
+- **[08 — Datenschutz & DSGVO](08-DSGVO-Datenschutz.md)** — Privacy Rules
 - **[skill/SKILL.md](../skill/SKILL.md)** — Die 10 Planungsschritte
 
 ---
