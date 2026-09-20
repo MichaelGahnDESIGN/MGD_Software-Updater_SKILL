@@ -2,17 +2,17 @@
   "schemaVersion": 1,
   "product": "MGD Academy",
   "channel": "stable",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "releasedAt": "2026-09-20",
-  "title": "MGD Academy 0.3.0",
-  "notes": "Neues modernes UI, überarbeitetes Dashboard, verbesserter Light/Dark Mode und öffentlicher Updatekanal.",
-  "releasePageUrl": "https://github.com/MichaelGahnDESIGN/Werbeagentur-Schulung/releases/tag/v0.3.0",
+  "title": "MGD Academy 0.3.1",
+  "notes": "Behebt die macOS Netzwerkberechtigung für die Updateprüfung und verbessert die manuelle Update-Suche.",
+  "releasePageUrl": "https://github.com/MichaelGahnDESIGN/Werbeagentur-Schulung/releases/tag/v0.3.1",
   "macOS": {
-    "assetName": "MGD-Academy-0.3.0-macOS.dmg",
+    "assetName": "MGD-Academy-0.3.1-macOS.dmg",
     "downloadUrl": null
   },
   "windows": {
-    "assetName": "MGD-Academy-0.3.0-Windows-Setup.exe",
+    "assetName": "MGD-Academy-0.3.1-Windows-Setup.exe",
     "downloadUrl": null
   }
 }
