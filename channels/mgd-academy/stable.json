@@ -2,17 +2,25 @@
   "schemaVersion": 1,
   "product": "MGD Academy",
   "channel": "stable",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "releasedAt": "2026-09-20",
-  "title": "MGD Academy 0.3.1",
-  "notes": "Behebt die macOS Netzwerkberechtigung für die Updateprüfung und verbessert die manuelle Update-Suche.",
-  "releasePageUrl": "https://github.com/MichaelGahnDESIGN/Werbeagentur-Schulung/releases/tag/v0.3.1",
+  "title": "MGD Academy 0.3.2",
+  "notes": "Verbessert die Update-Anzeige und macht Versionssprünge sowie Neuerungen direkt in der App sichtbar.",
+  "changes": [
+    "Aktuelle App-Version wird dauerhaft unten links in der Seitenleiste angezeigt.",
+    "Updatebereich zeigt installierte und verfügbare Version direkt gegenüber.",
+    "Neuer Details-Button bei verfügbaren Updates.",
+    "Info-Modal zeigt Versionsnummer, Veröffentlichungsdatum und Neuerungen.",
+    "Update-Details sind auch direkt im Dashboard erreichbar.",
+    "Manuelle Suche unter Einstellungen → Updates → Nach Updates suchen bleibt erhalten."
+  ],
+  "releasePageUrl": "https://github.com/MichaelGahnDESIGN/Werbeagentur-Schulung/releases/tag/v0.3.2",
   "macOS": {
-    "assetName": "MGD-Academy-0.3.1-macOS.dmg",
+    "assetName": "MGD-Academy-0.3.2-macOS.dmg",
     "downloadUrl": null
   },
   "windows": {
-    "assetName": "MGD-Academy-0.3.1-Windows-Setup.exe",
+    "assetName": "MGD-Academy-0.3.2-Windows-Setup.exe",
     "downloadUrl": null
   }
 }
