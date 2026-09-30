@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Plattformgerechte Release-, Paket- und Backend-Updatewege für WordPress, Shopware 6 und JTL Shop 5 ergänzt.
 - Geschützte Update-Kanäle für private PHP-Plugins und die separate öffentliche Binär-Release-Strecke der MGD Academy beschrieben.
 - Prüfmatrix und Grenzen von GitHub-Release, CI, Digest und realem Installationstest festgehalten.
+- Kostenbewussten privaten Release-Prozess ohne Betreiber-Terminal sowie Risiken eines kurzzeitig öffentlichen Repositories dokumentiert.
 
 ---
 

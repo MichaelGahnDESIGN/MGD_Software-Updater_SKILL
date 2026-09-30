@@ -17,6 +17,32 @@ Bei öffentlichen Repositories kann das CMS Release-Metadaten und Paket ohne Sch
 
 Ein öffentliches Release-Repository wie bei MGD Academy legt seine Binärpakete offen. Dieses Muster eignet sich **nicht** für privaten Plugin-Code, wenn das ZIP den PHP-Quellcode enthält.
 
+### Privater Release ohne Terminalarbeit für Shop-Betreiber
+
+Der Betreiber muss weder Befehle ausführen noch GitHub Actions bezahlen. Eine
+beauftragte Wartungsperson kann Quellcode, Tests, festen ZIP-Build, Prüfsumme,
+Git-Commit und privates GitHub-Release selbst übernehmen. Ein Release-**Entwurf**
+ist dafür ein sicherer Zwischenstand: Er ist noch kein reguläres Update und
+erscheint nicht unter `releases/latest`. Erst nach Paketprüfung, Backup,
+Staging und Freigabe wird veröffentlicht. Anschließend erfolgt die Installation
+im jeweiligen CMS-Backend; die Wartungsperson kann auch diesen Schritt mit
+autorisiertem Backend-Zugang übernehmen.
+
+GitHub Actions ist ein **optionaler** Build-Helfer, keine Voraussetzung für
+GitHub-Releases. Private Repositories haben für GitHub-gehostete Runner ein
+planabhängiges Freikontingent; wenn ein Job wegen Konto-/Budgeteinstellungen
+nicht startet, beweist dies keinen Codefehler. Lokal ausgeführte Tests und
+Paketprüfung müssen dann ausdrücklich protokolliert werden. Ein selbst
+betriebener Runner verbraucht laut GitHub keine GitHub-Actions-Minuten, erfordert
+aber Betrieb und Pflege des eigenen Rechners. Das Repository nur zur Umgehung
+einer solchen Grenze vorübergehend öffentlich zu machen, ist keine sichere
+Alternative: Code und Historie wären sichtbar; öffentliche Forks bleiben beim
+Zurückstellen auf privat unter Umständen öffentlich.
+
+Quellen: [GitHub Actions und Freikontingent](https://docs.github.com/en/billing/concepts/product-billing/github-actions),
+[selbst betriebene Runner](https://docs.github.com/en/actions/concepts/runners/self-hosted-runners),
+[Folgen eines Sichtbarkeitswechsels](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/setting-repository-visibility).
+
 ## WordPress
 
 - Plugin-Header `Version` und bei externem Anbieter `Update URI` korrekt setzen. Die WordPress-Update-Information muss zum exakten Plugin-Basename und Slug passen.
