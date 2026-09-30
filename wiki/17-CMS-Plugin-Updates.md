@@ -39,6 +39,12 @@ einer solchen Grenze vorübergehend öffentlich zu machen, ist keine sichere
 Alternative: Code und Historie wären sichtbar; öffentliche Forks bleiben beim
 Zurückstellen auf privat unter Umständen öffentlich.
 
+Bei einem **öffentlichen** Repository sind GitHubs Standard-Runner wie
+`ubuntu-latest` laut GitHub kostenlos und unbegrenzt. Ein dauerhaft wartender,
+nicht vorhandener `self-hosted`-Runner kann dort durch einen Standard-Runner
+ersetzt werden; prüfe danach den konkreten Tag-Workflow und das Release-Asset.
+Bei einem **privaten** Repository gilt diese unbegrenzte Zusage nicht.
+
 Quellen: [GitHub Actions und Freikontingent](https://docs.github.com/en/billing/concepts/product-billing/github-actions),
 [selbst betriebene Runner](https://docs.github.com/en/actions/concepts/runners/self-hosted-runners),
 [Folgen eines Sichtbarkeitswechsels](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/setting-repository-visibility).
@@ -63,6 +69,7 @@ Hooks müssen mit der benötigten Argumentzahl registriert werden. Beispiel: Wer
 - Ein Shopware-Plugin kann GitHub-Releases prüfen und ein neues Paket **vorbereiten**. Die Anwendung des Pakets soll durch Shopwares native Plugin-Verwaltung und deren Update-/Migrationsablauf erfolgen. Ein Dateikopieren direkt über die laufende Installation ist kein sicheres Backend-Update.
 - Paket nur aus stabilem Release, mit fester Asset-Bezeichnung, Integritätsprüfung und atomarer Staging-Ablage akzeptieren. Anschließend Plugin-Refresh, Update und Cache-/Theme-Kompilierung nach Shopware-Verfahren testen.
 - „Jede Stunde prüfen“ bedeutet nur Erkennung nach Cache-/Cron-Lauf, nicht GitHub-Push-Benachrichtigung und nicht automatisches Installieren. Einen manuellen „Jetzt prüfen“-Knopf für Administratoren anbieten.
+- Wenn die Release-Vorbereitung bereits aktive Plugin-Dateien austauscht, muss der Hintergrundjob standardmäßig **aus** sein. Ein globales Opt-in in der Plugin-Konfiguration, private Rückfallsicherung und ein separat ausgelöster nativer Shopware-Update-Schritt sind Mindestschutz. Ein bloßes ZIP-Release oder ein grüner Unit-Test belegt noch keine Update-Schaltfläche im Kundenshop.
 
 ## JTL Shop 5
 

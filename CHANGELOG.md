@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Geschützte Update-Kanäle für private PHP-Plugins und die separate öffentliche Binär-Release-Strecke der MGD Academy beschrieben.
 - Prüfmatrix und Grenzen von GitHub-Release, CI, Digest und realem Installationstest festgehalten.
 - Kostenbewussten privaten Release-Prozess ohne Betreiber-Terminal sowie Risiken eines kurzzeitig öffentlichen Repositories dokumentiert.
+- Kostenfreie Standard-Runner in öffentlichen Repositories, globales Shopware-Opt-in für Dateivorbereitung und die Grenzen eines privaten ZIP-Basis-Releases ergänzt.
 
 ---
 
