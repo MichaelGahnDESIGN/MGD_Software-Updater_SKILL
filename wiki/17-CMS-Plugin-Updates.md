@@ -51,6 +51,12 @@ Quellen: [GitHub Actions und Freikontingent](https://docs.github.com/en/billing/
 - Die eigentliche Installation soll WordPress über „Plugins“ oder „Dashboard → Aktualisierungen“ durchführen. WordPress-Auto-Updates nur nach ausdrücklicher Produktentscheidung aktivieren.
 - Besonders kritisch: Daten, die fälschlich innerhalb des Plugin-Verzeichnisses liegen, können beim Ersetzen des Ordners verloren gehen. Vor dem ersten Update migrieren und sichern.
 
+### Praxistest des nativen Backend-Updates
+
+Für einen belastbaren Test reicht `Plugin_Upgrader::upgrade()` aus der Kommandozeile nicht: Dieser Weg kann ein Plugin deaktiviert lassen, obwohl das normale Backend-Massenupdate es wieder aktiviert. Teste deshalb auch `Plugin_Upgrader::bulk_upgrade()` mit `WP_Ajax_Upgrader_Skin` in einer isolierten WordPress-Installation. Vergleiche danach Version, Aktivierungszustand und einen vor dem Update gesetzten Optionswert. Simuliere bei privaten Paketen sowohl die authentifizierte Release-Abfrage als auch den Download des Assets; prüfe ausdrücklich, dass ein GitHub-Token bei einer CDN-Weiterleitung **nicht** mitgesendet wird.
+
+Hooks müssen mit der benötigten Argumentzahl registriert werden. Beispiel: Wer in `upgrader_process_complete` sowohl den Upgrader als auch die Hook-Daten verwendet, muss `add_action('upgrader_process_complete', $callback, 10, 2)` setzen. Andernfalls kann das Backend-Update erst nach erfolgreichem Entpacken mit einem PHP-Fatal scheitern.
+
 ## Shopware 6
 
 - Composer-/Plugin-Version, Tag und ZIP-Paket synchronisieren; Shopware-kompatible Ordnerstruktur prüfen.
@@ -64,6 +70,11 @@ Quellen: [GitHub Actions und Freikontingent](https://docs.github.com/en/billing/
 - GitHub-Release-Prüfung kann im JTL-Backend eine neue Version und einen Download anzeigen. **Das ist noch kein Ein-Klick-Update aus GitHub.** Der bisherige MGD-Weg lädt das ZIP herunter, lädt es in die JTL-Pluginverwaltung und führt das Update dort aus.
 - Für einen echten „Update“-Knopf ohne manuellen ZIP-Upload muss das neue Paket kontrolliert serverseitig in die erwartete Plugin-Ablage gelangen und der JTL-Pluginmanager es als neue Version erkennen. Dies nur gegen die konkret eingesetzte JTL-Version und mit Backup testen; kein direktes Überschreiben aktiver PHP-Dateien.
 - Cache-Häufigkeit und Backend-„Jetzt prüfen“ sind getrennte Einstellungen. Frontend-Requests dürfen GitHub nicht synchron belasten.
+- Der offiziell dokumentierte direkte „Update“-Knopf für bezogene Erweiterungen gehört zum **JTL-Extension-Store** (`Plugins → Meine Käufe`). Für selbst gepflegte GitHub-ZIPs ist damit noch kein gleichwertiger Ein-Klick-Kanal belegt. Ein Release-Hinweis mit anschließendem ZIP-Upload im JTL-Pluginmanager ist ein funktionierender Backend-Updateweg, aber nicht derselbe Komfort. Eine private GitHub-zu-JTL-Ein-Klick-Integration erst nach Prüfung der konkret installierten Shop-Version und unterstützten JTL-Schnittstellen zusagen.
+
+## Veröffentlichte Entwürfe und Tag-Workflows
+
+Wird ein geprüfter GitHub-Release-Entwurf veröffentlicht, entsteht der Tag und ein `push tags`-Workflow kann starten. Dieser Workflow darf nicht blind `gh release create` auf denselben Tag ausführen. Er muss ein bereits vorhandenes Release als unveränderlich behandeln und das gebaute Paket mit dessen Asset vergleichen. Bei ZIP-Dateien Dateiliste und entpackte Inhalte vergleichen: Unterschiedliche ZIP-Zeitstempel verändern den Hash der gesamten ZIP-Datei, obwohl die Plugin-Dateien identisch sind. Eine mitgelieferte `.sha256`-Datei jeweils gegen **ihr eigenes** ZIP prüfen. Den veröffentlichten Tag bei einem später entdeckten Workflow-Fehler nicht still verschieben; die Korrektur gilt für das nächste Release.
 
 ## Testprotokoll pro Plugin
 
