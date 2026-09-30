@@ -14,6 +14,8 @@ Der Skill besteht aus zwei Phasen:
 
 Der Skill ist **technologie-neutral**: Desktop (Electron, Tauri, Flutter), Mobile (Flutter, React Native, Swift), Web (React, Vue, Next.js), Backend (Node.js, Python, Go), Games (Unity, Godot).
 
+Für konkrete Plattformen nach der Planung: [CMS-Plugin-Updates (WordPress, Shopware, JTL Shop)](../wiki/17-CMS-Plugin-Updates.md) und [MGD Academy In-App-Updates](../wiki/18-MGD-Academy-In-App-Updates.md). Ein Release-Tag beweist noch keine Erkennung oder Installation im Produkt.
+
 ---
 
 ## Kernregel — Erst planen, dann implementieren

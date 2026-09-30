@@ -20,6 +20,8 @@ Der Skill begleitet dich in 2 Phasen:
 
 Für Desktop-Apps (Flutter, Electron, Tauri, Swift), Mobile Apps, Web-Apps, SaaS und Backend-Systeme.
 
+Neu: [CMS-Plugin-Updates für WordPress, Shopware und JTL Shop](wiki/17-CMS-Plugin-Updates.md) sowie die [konkrete In-App-Update-Strecke von MGD Academy](wiki/18-MGD-Academy-In-App-Updates.md). Beide Anleitungen trennen Erkennung, Paket, Backend-Installation und realen Funktionstest.
+
 ---
 
 ## Was ist dieser Skill?
