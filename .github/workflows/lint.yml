@@ -1,4 +1,4 @@
-name: Lint & Type Check
+name: Skill-Struktur prüfen
 
 on:
   push:
@@ -10,42 +10,23 @@ on:
       - main
       - develop
 
+permissions:
+  contents: read
+
 jobs:
-  lint:
-    runs-on: [self-hosted, Linux]
-    strategy:
-      matrix:
-        node-version: [22.23.4, 24.22.1]
-
+  check:
+    # Dieser Skill enthält kein ausführbares Node-Projekt. Ein GitHub-Runner
+    # prüft deshalb nur die tatsächlich versionierte Skill-Struktur.
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+      - name: Erforderliche Skill-Dateien prüfen
+        run: |
+          set -euo pipefail
+          for datei in README.md SECURITY.md skill/SKILL.md package.json.example tsconfig.json; do
+            test -f "$datei"
+          done
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run ESLint
-        run: npm run lint
-        continue-on-error: false
-
-      - name: Run TypeScript type check
-        run: npm run type-check
-        continue-on-error: false
-
-      - name: Run tests
-        run: npm run test -- --coverage
-        continue-on-error: true
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v3
-        if: always()
-        with:
-          files: ./coverage/coverage-final.json
-          flags: unittests
-          name: codecov-umbrella
+      - name: JSON-Beispiel prüfen
+        run: python3 -m json.tool package.json.example >/dev/null
